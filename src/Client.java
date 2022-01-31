@@ -10,8 +10,9 @@ class Client implements Runnable {
     Scanner in;
     PrintStream out;
     ChatServer server;
+    String name;
 
-    public Client(Socket socket,ChatServer server){
+    public Client(Socket socket, ChatServer server) {
 
         this.socket = socket;
         this.server = server;
@@ -19,7 +20,7 @@ class Client implements Runnable {
 
     }
 
-    void receive(String message){
+    void receive(String message) {
         out.println(message);
     }
 
@@ -35,9 +36,15 @@ class Client implements Runnable {
 
             // читаем из сети и пишем в сеть
             out.println("Welcome to chatik!");
+            out.println("What your name?");
             String input = in.nextLine();
             while (!input.equals("bye")) {
-                server.sendAll(input);
+                if (this.name == null) {
+                    this.name = input;
+                    server.sendAll("Welcome " + input);
+                } else {
+                    server.sendAll(this.name + " - " + input);
+                }
                 input = in.nextLine();
             }
             socket.close();
